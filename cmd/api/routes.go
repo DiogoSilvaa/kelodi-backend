@@ -11,7 +11,7 @@ func (app *application) routes() *httprouter.Router {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/properties", app.createPropertyHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/properties/:id", app.fetchPropertyHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/properties/:id", app.getPropertyHandler)
 
 	return router
 }
