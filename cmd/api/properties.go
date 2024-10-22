@@ -11,25 +11,26 @@ func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Req
 	fmt.Fprintln(w, "create a new property")
 }
 
-func (app *application) getPropertyHandler (w http.ResponseWriter, r *http.Request) {
+func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
 	property := data.Property{
-		ID: id,
-		Title: "Villa",
+		ID:          id,
+		Title:       "Villa",
 		Description: "A 6 Bedroom Villa",
-		Location: "Quinta do Lago",
-		CreatedAt: time.Now(),
-		CreatedBy: "Diogo",
+		Location:    "Quinta do Lago",
+		CreatedAt:   time.Now(),
+		CreatedBy:   "Diogo",
 	}
 
-	err = app.writeJSON(w, http.StatusOK, property, nil)
+	envelopedData := envelope{"property": property}
+
+	err = app.writeJSON(w, http.StatusOK, envelopedData, nil)
 	if err != nil {
-		app.logger.Println(err)
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		app.serverErrorResponse(w, r, err)
 	}
 }
