@@ -2,13 +2,41 @@ package main
 
 import (
 	"elodi-backend/internal/data"
+	"elodi-backend/internal/validator"
 	"fmt"
 	"net/http"
 	"time"
 )
 
 func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "create a new property")
+	var input struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Location    string `json:"location"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	v.Check(input.Title != "", "title", "must be provided")
+	v.Check(len(input.Title) <= 500, "title", "must not be longer than 500 bytes")
+
+	v.Check(input.Description != "", "description", "must be provided")
+	v.Check(len(input.Description) <= 500, "description", "must not be longer than 500 bytes")
+
+	v.Check(input.Location != "", "location", "must be provided")
+	v.Check(len(input.Location) <= 500, "location", "must not be longer than 500 bytes")
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	fmt.Fprintf(w, "%+v\n", input)
 }
 
 func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Request) {
