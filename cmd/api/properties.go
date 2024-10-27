@@ -9,6 +9,7 @@ import (
 )
 
 func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Request) {
+	// Decode into intermediary struct to prevent id from being passed in
 	var input struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
@@ -21,17 +22,14 @@ func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	property := &data.Property{
+		Title:       input.Title,
+		Description: input.Description,
+		Location:    input.Location,
+	}
+
 	v := validator.New()
-	v.Check(input.Title != "", "title", "must be provided")
-	v.Check(len(input.Title) <= 500, "title", "must not be longer than 500 bytes")
-
-	v.Check(input.Description != "", "description", "must be provided")
-	v.Check(len(input.Description) <= 500, "description", "must not be longer than 500 bytes")
-
-	v.Check(input.Location != "", "location", "must be provided")
-	v.Check(len(input.Location) <= 500, "location", "must not be longer than 500 bytes")
-
-	if !v.Valid() {
+	if data.ValidateProperty(v, property); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
