@@ -81,6 +81,54 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 	return &property, nil
 }
 
+func (p PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, error) {
+	query := `
+	SELECT id, title, description, location, created_at, created_by, version
+	FROM properties
+	WHERE(LOWER(title)=LOWER($1) OR $1 = '')
+	AND (LOWER(description)=LOWER($2) OR $2 = '')
+	AND (LOWER(location)=LOWER($3) OR $3 = '')
+	ORDER BY id
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := p.DB.QueryContext(ctx, query, title, description, location)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	properties := []*Property{}
+
+	for rows.Next() {
+		var property Property
+
+		err := rows.Scan(
+			&property.ID,
+			&property.Title,
+			&property.Description,
+			&property.Location,
+			&property.CreatedAt,
+			&property.CreatedBy,
+			&property.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		properties = append(properties, &property)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return properties, nil
+}
+
 func (p PropertyRepo) Update(property *Property) error {
 	query := `
 		UPDATE properties

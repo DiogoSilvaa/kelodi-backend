@@ -98,7 +98,16 @@ func (app *application) listPropertiesHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", input)
+	properties, err := app.models.Properties.GetAll(input.Title, input.Description, input.Location, input.Filters)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"properties": properties}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Request) {
