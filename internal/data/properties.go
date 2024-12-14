@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"elodi-backend/internal/validator"
 	"errors"
@@ -56,7 +57,10 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 
 	var property Property
 
-	err := p.DB.QueryRow(query, id).Scan(
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := p.DB.QueryRowContext(ctx, query, id).Scan(
 		&property.ID,
 		&property.Title,
 		&property.Description,
@@ -92,7 +96,10 @@ func (p PropertyRepo) Update(property *Property) error {
 		property.Version,
 	}
 
-	err := p.DB.QueryRow(query, args...).Scan(&property.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := p.DB.QueryRowContext(ctx, query, args...).Scan(&property.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -116,7 +123,10 @@ func (p PropertyRepo) Delete(id int64) error {
 		WHERE id = $1
 	`
 
-	result, err := p.DB.Exec(query, id)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := p.DB.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}
