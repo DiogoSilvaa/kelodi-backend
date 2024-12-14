@@ -14,6 +14,7 @@ type Property struct {
 	Location    string    `json:"location"`
 	CreatedAt   time.Time `json:"created_at"`
 	CreatedBy   string    `json:"created_by"`
+	Version     int64     `json:"version"`
 }
 
 func ValidateProperty(v *validator.Validator, property *Property) {
@@ -35,12 +36,12 @@ func (p PropertyRepo) Insert(property *Property) error {
 	query := `
 		INSERT INTO properties (title, description, location, created_by)
 		VALUES ($1, $2, $3, 'anonymous')
-		RETURNING id, created_at, created_by
+		RETURNING id, created_at, created_by, version
 	`
 
 	args := []interface{}{property.Title, property.Description, property.Location}
 
-	return p.DB.QueryRow(query, args...).Scan(&property.ID, &property.CreatedAt, &property.CreatedBy)
+	return p.DB.QueryRow(query, args...).Scan(&property.ID, &property.CreatedAt, &property.CreatedBy, &property.Version)
 }
 
 func (p PropertyRepo) Get(id int64) (*Property, error) {
@@ -48,14 +49,22 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 		return nil, ErrRecordNotFound
 	}
 
-	query := `SELECT id, title, description, location, created_at, created_by
+	query := `SELECT id, title, description, location, created_at, created_by, version
 		FROM properties
 		WHERE id = $1
 	`
 
 	var property Property
 
-	err := p.DB.QueryRow(query, id).Scan(&property.ID, &property.Title, &property.Description, &property.Location, &property.CreatedAt, &property.CreatedBy)
+	err := p.DB.QueryRow(query, id).Scan(
+		&property.ID,
+		&property.Title,
+		&property.Description,
+		&property.Location,
+		&property.CreatedAt,
+		&property.CreatedBy,
+		&property.Version,
+	)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
