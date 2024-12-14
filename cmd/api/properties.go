@@ -3,9 +3,9 @@ package main
 import (
 	"elodi-backend/internal/data"
 	"elodi-backend/internal/validator"
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 )
 
 func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,19 @@ func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", input)
+	err = app.models.Properties.Insert(property)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("v1/properties/%d", property.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"property": property}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,18 +56,18 @@ func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	property := data.Property{
-		ID:          id,
-		Title:       "Villa",
-		Description: "A 6 Bedroom Villa",
-		Location:    "Quinta do Lago",
-		CreatedAt:   time.Now(),
-		CreatedBy:   "Diogo",
+	property, err := app.models.Properties.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
 	}
 
-	envelopedData := envelope{"property": property}
-
-	err = app.writeJSON(w, http.StatusOK, envelopedData, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"property": property}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
