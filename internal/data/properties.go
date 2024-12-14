@@ -81,18 +81,28 @@ func (p PropertyRepo) Update(property *Property) error {
 	query := `
 		UPDATE properties
 		SET title = $1, description = $2, location = $3
-		WHERE id = $4
+		WHERE id = $4 AND version = $5
+		RETURNING version
 	`
 	args := []interface{}{
 		property.Title,
 		property.Description,
 		property.Location,
 		property.ID,
+		property.Version,
 	}
 
-	_, err := p.DB.Exec(query, args...)
+	err := p.DB.QueryRow(query, args...).Scan(&property.Version)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
 
-	return err
+	return nil
 }
 
 func (p PropertyRepo) Delete(id int64) error {

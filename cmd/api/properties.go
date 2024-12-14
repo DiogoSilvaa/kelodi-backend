@@ -125,7 +125,12 @@ func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Req
 
 	err = app.models.Properties.Update(property)
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.ediConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 
