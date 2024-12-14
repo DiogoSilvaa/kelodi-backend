@@ -69,9 +69,47 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 }
 
 func (p PropertyRepo) Update(property *Property) error {
-	return nil
+	query := `
+		UPDATE properties
+		SET title = $1, description = $2, location = $3
+		WHERE id = $4
+	`
+	args := []interface{}{
+		property.Title,
+		property.Description,
+		property.Location,
+		property.ID,
+	}
+
+	_, err := p.DB.Exec(query, args...)
+
+	return err
 }
 
 func (p PropertyRepo) Delete(id int64) error {
+
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+
+	query := `
+		DELETE FROM properties
+		WHERE id = $1
+	`
+
+	result, err := p.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
 	return nil
 }
