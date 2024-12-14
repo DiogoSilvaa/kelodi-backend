@@ -73,6 +73,34 @@ func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+func (app *application) listPropertiesHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Title       string
+		Description string
+		Location    string
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Title = app.readString(qs, "title", "")
+	input.Description = app.readString(qs, "description", "")
+	input.Location = app.readString(qs, "location", "")
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+	input.Filters.Sort = app.readString(qs, "sort", "id")
+	input.Filters.SortSafeList = []string{"id", "title", "description", "location", "-id", "-title", "-description", "-location"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	fmt.Fprintf(w, "%+v\n", input)
+}
+
 func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 
