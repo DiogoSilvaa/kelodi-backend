@@ -93,9 +93,9 @@ func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	var input struct {
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		Location    string `json:"location"`
+		Title       *string `json:"title"`
+		Description *string `json:"description"`
+		Location    *string `json:"location"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -104,9 +104,17 @@ func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	property.Title = input.Title
-	property.Description = input.Description
-	property.Location = input.Location
+	if input.Title != nil {
+		property.Title = *input.Title
+	}
+
+	if input.Description != nil {
+		property.Description = *input.Description
+	}
+
+	if input.Location != nil {
+		property.Location = *input.Location
+	}
 
 	v := validator.New()
 
