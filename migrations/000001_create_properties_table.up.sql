@@ -7,3 +7,10 @@ CREATE TABLE IF NOT EXISTS properties (
     created_by text NOT NULL,
     version integer NOT NULL DEFAULT 1
 );
+
+CREATE INDEX IF NOT EXISTS properties_title_idx ON 
+properties USING GIN(to_tsvector('simple', title));
+CREATE INDEX IF NOT EXISTS properties_description_idx ON 
+properties USING GIN(to_tsvector('simple',description));
+CREATE INDEX IF NOT EXISTS properties_location_idx ON 
+properties USING GIN(to_tsvector('simple',location));

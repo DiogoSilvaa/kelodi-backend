@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"elodi-backend/internal/validator"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -82,14 +83,14 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 }
 
 func (p PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, error) {
-	query := `
+	query := fmt.Sprintf(`
 	SELECT id, title, description, location, created_at, created_by, version
 	FROM properties
-	WHERE(LOWER(title)=LOWER($1) OR $1 = '')
-	AND (LOWER(description)=LOWER($2) OR $2 = '')
-	AND (LOWER(location)=LOWER($3) OR $3 = '')
-	ORDER BY id
-	`
+	WHERE(to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
+	AND (to_tsvector('simple', description) @@ plainto_tsquery('simple', $2) OR $2 = '')
+	AND (to_tsvector('simple', location) @@ plainto_tsquery('simple', $3) OR $3 = '')
+	ORDER BY %s %s, id ASC
+	`, filters.sortColumn(), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
