@@ -54,3 +54,8 @@ func (app *application) ediConflictResponse(w http.ResponseWriter, r *http.Reque
 
 	app.errorResponse(w, r, http.StatusConflict, message)
 }
+
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
+	message := "rate limit exceeded"
+	app.errorResponse(w, r, http.StatusTooManyRequests, message)
+}
