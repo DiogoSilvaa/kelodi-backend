@@ -98,13 +98,13 @@ func (app *application) listPropertiesHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	properties, err := app.models.Properties.GetAll(input.Title, input.Description, input.Location, input.Filters)
+	properties, metadata, err := app.models.Properties.GetAll(input.Title, input.Description, input.Location, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"properties": properties}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"properties": properties, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

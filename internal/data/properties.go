@@ -82,32 +82,37 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 	return &property, nil
 }
 
-func (p PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, error) {
+func (p PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, Metadata, error) {
 	query := fmt.Sprintf(`
-	SELECT id, title, description, location, created_at, created_by, version
+	SELECT count(*) OVER(), id, title, description, location, created_at, created_by, version
 	FROM properties
 	WHERE(to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
 	AND (to_tsvector('simple', description) @@ plainto_tsquery('simple', $2) OR $2 = '')
 	AND (to_tsvector('simple', location) @@ plainto_tsquery('simple', $3) OR $3 = '')
 	ORDER BY %s %s, id ASC
+	LIMIT $4 OFFSET $5
 	`, filters.sortColumn(), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := p.DB.QueryContext(ctx, query, title, description, location)
+	args := []interface{}{title, description, location, filters.limit(), filters.offset()}
+
+	rows, err := p.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, Metadata{}, err
 	}
 
 	defer rows.Close()
 
+	totalRecords := 0
 	properties := []*Property{}
 
 	for rows.Next() {
 		var property Property
 
 		err := rows.Scan(
+			&totalRecords,
 			&property.ID,
 			&property.Title,
 			&property.Description,
@@ -117,17 +122,19 @@ func (p PropertyRepo) GetAll(title string, description string, location string, 
 			&property.Version,
 		)
 		if err != nil {
-			return nil, err
+			return nil, Metadata{}, err
 		}
 
 		properties = append(properties, &property)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, Metadata{}, err
 	}
 
-	return properties, nil
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return properties, metadata, nil
 }
 
 func (p PropertyRepo) Update(property *Property) error {
