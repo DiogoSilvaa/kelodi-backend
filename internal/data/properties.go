@@ -34,7 +34,7 @@ type PropertyRepo struct {
 	DB *sql.DB
 }
 
-func (p PropertyRepo) Insert(property *Property) error {
+func (r PropertyRepo) Insert(property *Property) error {
 	query := `
 		INSERT INTO properties (title, description, location, created_by)
 		VALUES ($1, $2, $3, 'anonymous')
@@ -43,10 +43,10 @@ func (p PropertyRepo) Insert(property *Property) error {
 
 	args := []interface{}{property.Title, property.Description, property.Location}
 
-	return p.DB.QueryRow(query, args...).Scan(&property.ID, &property.CreatedAt, &property.CreatedBy, &property.Version)
+	return r.DB.QueryRow(query, args...).Scan(&property.ID, &property.CreatedAt, &property.CreatedBy, &property.Version)
 }
 
-func (p PropertyRepo) Get(id int64) (*Property, error) {
+func (r PropertyRepo) Get(id int64) (*Property, error) {
 	if id < 1 {
 		return nil, ErrRecordNotFound
 	}
@@ -61,7 +61,7 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := p.DB.QueryRowContext(ctx, query, id).Scan(
+	err := r.DB.QueryRowContext(ctx, query, id).Scan(
 		&property.ID,
 		&property.Title,
 		&property.Description,
@@ -82,7 +82,7 @@ func (p PropertyRepo) Get(id int64) (*Property, error) {
 	return &property, nil
 }
 
-func (p PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, Metadata, error) {
+func (r PropertyRepo) GetAll(title string, description string, location string, filters Filters) ([]*Property, Metadata, error) {
 	query := fmt.Sprintf(`
 	SELECT count(*) OVER(), id, title, description, location, created_at, created_by, version
 	FROM properties
@@ -98,7 +98,7 @@ func (p PropertyRepo) GetAll(title string, description string, location string, 
 
 	args := []interface{}{title, description, location, filters.limit(), filters.offset()}
 
-	rows, err := p.DB.QueryContext(ctx, query, args...)
+	rows, err := r.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, Metadata{}, err
 	}
@@ -137,7 +137,7 @@ func (p PropertyRepo) GetAll(title string, description string, location string, 
 	return properties, metadata, nil
 }
 
-func (p PropertyRepo) Update(property *Property) error {
+func (r PropertyRepo) Update(property *Property) error {
 	query := `
 		UPDATE properties
 		SET title = $1, description = $2, location = $3
@@ -155,7 +155,7 @@ func (p PropertyRepo) Update(property *Property) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := p.DB.QueryRowContext(ctx, query, args...).Scan(&property.Version)
+	err := r.DB.QueryRowContext(ctx, query, args...).Scan(&property.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -168,7 +168,7 @@ func (p PropertyRepo) Update(property *Property) error {
 	return nil
 }
 
-func (p PropertyRepo) Delete(id int64) error {
+func (r PropertyRepo) Delete(id int64) error {
 
 	if id < 1 {
 		return ErrRecordNotFound
@@ -182,7 +182,7 @@ func (p PropertyRepo) Delete(id int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := p.DB.ExecContext(ctx, query, id)
+	result, err := r.DB.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}
