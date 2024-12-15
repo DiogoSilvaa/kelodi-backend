@@ -34,7 +34,7 @@ func (app *application) createPropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = app.models.Properties.Insert(property)
+	err = app.repos.Properties.Insert(property)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -56,7 +56,7 @@ func (app *application) getPropertyHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	property, err := app.models.Properties.Get(id)
+	property, err := app.repos.Properties.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -98,7 +98,7 @@ func (app *application) listPropertiesHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	properties, metadata, err := app.models.Properties.GetAll(input.Title, input.Description, input.Location, input.Filters)
+	properties, metadata, err := app.repos.Properties.GetAll(input.Title, input.Description, input.Location, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -118,7 +118,7 @@ func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	property, err := app.models.Properties.Get(id)
+	property, err := app.repos.Properties.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -160,7 +160,7 @@ func (app *application) updatePropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = app.models.Properties.Update(property)
+	err = app.repos.Properties.Update(property)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrEditConflict):
@@ -184,7 +184,7 @@ func (app *application) deletePropertyHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = app.models.Properties.Delete(id)
+	err = app.repos.Properties.Delete(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
