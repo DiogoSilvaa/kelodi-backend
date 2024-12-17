@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"elodi-backend/internal/validator"
 	"errors"
@@ -176,4 +177,20 @@ func (r UserRepo) Update(user *User) error {
 	}
 
 	return nil
+}
+
+func (r UserRepo) GetForToken(tokenScope string, tokenPlaintext string) (*User, error) {
+	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
+
+	query := `
+		SELECT 
+			users.id, users.created_at, users.name,
+			users.email, users.password_hash, users.activated,
+			users.version
+		FROM users 
+		INNER JOIN tokens
+		ON users.id = tokens.user_id
+		WHERE tokens
+
+	`
 }
