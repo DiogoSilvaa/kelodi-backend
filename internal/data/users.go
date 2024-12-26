@@ -21,6 +21,8 @@ type User struct {
 	Version   int       `json:"-"`
 }
 
+var AnonymousUser = &User{}
+
 type password struct {
 	plaintext *string
 	hash      []byte
@@ -33,6 +35,10 @@ type UserRepo struct {
 var (
 	ErrDuplicateEmail = errors.New("duplicate email")
 )
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
+}
 
 func (p *password) Set(plaintextPassword string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(plaintextPassword), 12)
