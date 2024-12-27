@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type Permissions []string
@@ -58,4 +60,19 @@ func (r PermissionRepo) GetAllForUser(userID int64) (Permissions, error) {
 	}
 
 	return permissions, nil
+}
+
+func (r PermissionRepo) AddForUser(userID int64, codes ...string) error {
+	query := `
+		INSERT INTO users_permissions
+			SELECT $1, permissions.id FROM permissions
+			WHERE permissions.code = ANY($2)
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := r.DB.ExecContext(ctx, query, userID, pq.Array(codes))
+
+	return err
 }
