@@ -131,6 +131,7 @@ func (r UserRepo) GetByEmail(email string) (*User, error) {
 
 	err := r.DB.QueryRowContext(ctx, query, email).Scan(
 		&user.ID,
+		&user.CreatedAt,
 		&user.Name,
 		&user.Email,
 		&user.Password.hash,
@@ -196,7 +197,9 @@ func (r UserRepo) GetForToken(tokenScope string, tokenPlaintext string) (*User, 
 		FROM users 
 		INNER JOIN tokens
 		ON users.id = tokens.user_id
-		WHERE tokens
+		WHERE tokens.hash = $1
+		AND tokens.scope = $2
+		AND tokens.expiry > $3
 	`
 
 	args := []interface{}{tokenHash[:], tokenScope, time.Now()}
