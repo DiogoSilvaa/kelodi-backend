@@ -118,6 +118,7 @@ func (app *application) readString(qs url.Values, key string, defaultValue strin
 	return s
 }
 
+//lint:ignore U1000 Ignore unused function for now
 func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
 	csv := qs.Get(key)
 	if csv == "" {
