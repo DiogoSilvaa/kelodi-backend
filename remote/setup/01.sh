@@ -39,9 +39,9 @@ mv migrate.linux-amd64 /usr/local/bin/migrate
 apt --yes install postgresql
 
 # Set up PostgreSQL
-sudo -i -u postgres psql -c "CREATE DATABASE elodi"
-sudo -i -u postgres psql -d elodi -c "CREATE EXTENSION IF NOT EXISTS citext"
 sudo -i -u postgres psql -d elodi -c "CREATE ROLE elodi WITH LOGIN PASSWORD '${DB_PASSWORD}'"
+sudo -i -u postgres psql -c "CREATE DATABASE elodi OWNER elodi"
+sudo -i -u postgres psql -d elodi -c "CREATE EXTENSION IF NOT EXISTS citext"
 echo "ELODI_DB_DSN='postgres://elodi:${DB_PASSWORD}@localhost/elodi'" >> /etc/environment
 
 # Install Caddy
