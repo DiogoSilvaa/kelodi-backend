@@ -1,4 +1,6 @@
 http://142.132.166.115 {
-respond /v1/metrics "Not Permitted" 403
-reverse_proxy localhost:4000
+    handle_path /api/* {
+        reverse_proxy localhost:4000
+		respond /v1/metrics "Not Permitted" 403
+    }
 }
