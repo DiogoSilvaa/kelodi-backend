@@ -39,7 +39,7 @@ mv migrate.linux-amd64 /usr/local/bin/migrate
 apt --yes install postgresql
 
 # Set up PostgreSQL
-sudo -i -u postgres psql -d kelodi -c "CREATE ROLE kelodi WITH LOGIN PASSWORD '${DB_PASSWORD}'"
+sudo -i -u postgres psql -c "CREATE ROLE kelodi WITH LOGIN PASSWORD '${DB_PASSWORD}'"
 sudo -i -u postgres psql -c "CREATE DATABASE kelodi OWNER kelodi"
 sudo -i -u postgres psql -d kelodi -c "CREATE EXTENSION IF NOT EXISTS citext"
 echo "KELODI_DB_DSN='postgres://kelodi:${DB_PASSWORD}@localhost/kelodi'" >> /etc/environment
