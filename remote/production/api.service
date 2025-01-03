@@ -1,5 +1,5 @@
 [Unit]
-Description=Elodi API service
+Description=Kelodi API service
 
 # Ensure the service starts after PostgreSQL and network are online
 After=postgresql.service
@@ -21,7 +21,7 @@ EnvironmentFile=/etc/environment
 
 # Set working directory and executable start command
 WorkingDirectory=/home/kelodi
-ExecStart=/home/kelodi/backend/api -port=4000 -db-dsn=${ELODI_DB_DSN} -env=production
+ExecStart=/home/kelodi/backend/api -port=4000 -db-dsn=${KELODI_DB_DSN} -env=production
 
 # Restart configuration
 Restart=on-failure
