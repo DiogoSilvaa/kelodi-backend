@@ -1,8 +1,8 @@
 package main
 
 import (
-	"elodi-backend/internal/data"
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/data"
+	"kelodi-backend/internal/validator"
 	"errors"
 	"fmt"
 	"net/http"

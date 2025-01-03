@@ -1,7 +1,7 @@
 package main
 
 import (
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/validator"
 	"encoding/json"
 	"errors"
 	"fmt"

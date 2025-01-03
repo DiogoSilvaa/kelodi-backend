@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"database/sql"
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/validator"
 	"encoding/base32"
 	"time"
 )

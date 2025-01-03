@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"database/sql"
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/validator"
 	"errors"
 	"time"
 

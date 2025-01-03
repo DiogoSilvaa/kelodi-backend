@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/validator"
 	"errors"
 	"fmt"
 	"time"

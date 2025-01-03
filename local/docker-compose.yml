@@ -6,6 +6,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: elodi_db
+      POSTGRES_DB: kelodi_db
     ports:
       - "5432:5432"

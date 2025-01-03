@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"elodi-backend/internal/data"
+	"kelodi-backend/internal/data"
 	"net/http"
 )
 

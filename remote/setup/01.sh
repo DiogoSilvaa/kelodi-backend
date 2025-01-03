@@ -2,9 +2,9 @@ set -eu
 
 TIMEZONE="Europe/London"
 
-USERNAME="elodi"
+USERNAME="kelodi"
 
-read -p "Enter password for elodi DB user: " DB_PASSWORD
+read -p "Enter password for kelodi DB user: " DB_PASSWORD
 
 export LC_ALL=en_US.UTF-8
 
@@ -39,10 +39,10 @@ mv migrate.linux-amd64 /usr/local/bin/migrate
 apt --yes install postgresql
 
 # Set up PostgreSQL
-sudo -i -u postgres psql -d elodi -c "CREATE ROLE elodi WITH LOGIN PASSWORD '${DB_PASSWORD}'"
-sudo -i -u postgres psql -c "CREATE DATABASE elodi OWNER elodi"
-sudo -i -u postgres psql -d elodi -c "CREATE EXTENSION IF NOT EXISTS citext"
-echo "ELODI_DB_DSN='postgres://elodi:${DB_PASSWORD}@localhost/elodi'" >> /etc/environment
+sudo -i -u postgres psql -d kelodi -c "CREATE ROLE kelodi WITH LOGIN PASSWORD '${DB_PASSWORD}'"
+sudo -i -u postgres psql -c "CREATE DATABASE kelodi OWNER kelodi"
+sudo -i -u postgres psql -d kelodi -c "CREATE EXTENSION IF NOT EXISTS citext"
+echo "KELODI_DB_DSN='postgres://kelodi:${DB_PASSWORD}@localhost/kelodi'" >> /etc/environment
 
 # Install Caddy
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl

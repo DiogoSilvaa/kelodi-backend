@@ -13,15 +13,15 @@ StartLimitBurst=5
 [Service]
 # Service type and user/group configuration
 Type=exec
-User=elodi
-Group=elodi
+User=kelodi
+Group=kelodi
 
 # Load environment variables from this file
 EnvironmentFile=/etc/environment
 
 # Set working directory and executable start command
-WorkingDirectory=/home/elodi
-ExecStart=/home/elodi/backend/api -port=4000 -db-dsn=${ELODI_DB_DSN} -env=production
+WorkingDirectory=/home/kelodi
+ExecStart=/home/kelodi/backend/api -port=4000 -db-dsn=${ELODI_DB_DSN} -env=production
 
 # Restart configuration
 Restart=on-failure

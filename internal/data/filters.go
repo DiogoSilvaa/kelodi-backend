@@ -1,7 +1,7 @@
 package data
 
 import (
-	"elodi-backend/internal/validator"
+	"kelodi-backend/internal/validator"
 	"math"
 	"strings"
 )

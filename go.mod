@@ -1,4 +1,4 @@
-module elodi-backend
+module kelodi-backend
 
 go 1.23.1
 
