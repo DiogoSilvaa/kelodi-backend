@@ -1,6 +1,18 @@
-http://142.132.166.115 {
+{
+    email diogonnobrega@gmail.com
+}
+
+kelodi.com {
+    redir https://www.kelodi.com{uri}
+}
+
+www.kelodi.com {
     handle_path /api/* {
-        reverse_proxy localhost:4000
 		respond /v1/metrics "Not Permitted" 403
+        reverse_proxy localhost:4000
+    }
+
+    handle {
+        respond "Not Found" 404
     }
 }
