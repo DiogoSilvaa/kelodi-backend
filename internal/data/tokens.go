@@ -5,14 +5,15 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"database/sql"
-	"kelodi-backend/internal/validator"
 	"encoding/base32"
+	"kelodi-backend/internal/validator"
 	"time"
 )
 
 const (
 	ScopeActivation     = "activation"
 	ScopeAuthentication = "authentication"
+	ScopePasswordReset  = "password-reset"
 )
 
 type Token struct {
