@@ -110,6 +110,7 @@ func (app *application) createPasswordResetTokenHandler(w http.ResponseWriter, r
 	token, err := app.repos.Tokens.New(user.ID, 1*time.Hour, data.ScopePasswordReset)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
+		return
 	}
 
 	app.background(func() {
@@ -118,6 +119,74 @@ func (app *application) createPasswordResetTokenHandler(w http.ResponseWriter, r
 		}
 
 		err = app.mailer.Send(user.Email, "token_password_reset.tmpl", data)
+		if err != nil {
+			app.logger.PrintError(err, nil)
+		}
+	})
+
+	err = app.writeJSON(w, http.StatusAccepted, env, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) createActivationTokenHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Email string `json:"email"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+
+	if data.ValidateEmail(v, input.Email); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	env := envelope{"message": "if an account with this email address exists, we have sent an activation link"}
+	user, err := app.repos.Users.GetByEmail(input.Email)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			err = app.writeJSON(
+				w,
+				http.StatusAccepted,
+				env,
+				nil,
+			)
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+			}
+			return
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if user.Activated {
+		v.AddError("email", "user account has already been activated")
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	token, err := app.repos.Tokens.New(user.ID, 3*24*time.Hour, data.ScopeActivation)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	app.background(func() {
+		data := map[string]interface{}{
+			"activationToken": token.Plaintext,
+		}
+
+		err = app.mailer.Send(user.Email, "token_activation.tmpl", data)
 		if err != nil {
 			app.logger.PrintError(err, nil)
 		}
