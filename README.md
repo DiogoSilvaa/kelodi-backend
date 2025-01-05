@@ -54,3 +54,4 @@ To use the Kelodi Backend, make HTTP requests to the API endpoints.
 
 - Add sqlx
 - Add tests
+- Add transactions to multi update actions
