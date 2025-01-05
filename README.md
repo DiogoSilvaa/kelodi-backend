@@ -49,3 +49,8 @@ To use the Kelodi Backend, make HTTP requests to the API endpoints.
 
 - Go
 - PostgreSQL
+
+## TODO
+
+- Add sqlx
+- Add tests
