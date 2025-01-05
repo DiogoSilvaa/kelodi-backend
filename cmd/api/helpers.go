@@ -1,11 +1,11 @@
 package main
 
 import (
-	"kelodi-backend/internal/validator"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"kelodi-backend/internal/validator"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -14,6 +14,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// envelope is a generic map for JSON responses.
 type envelope map[string]interface{}
 
 func (app *application) readIDParam(r *http.Request) (int64, error) {

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"kelodi-backend/internal/data"
-	"kelodi-backend/internal/validator"
 	"errors"
 	"expvar"
 	"fmt"
+	"kelodi-backend/internal/data"
+	"kelodi-backend/internal/validator"
 	"net/http"
 	"strconv"
 	"strings"
@@ -41,6 +41,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 		clients = make(map[string]*client)
 	)
 
+	// Background goroutine to remove old entries from the clients map.
 	go func() {
 		for {
 			time.Sleep(time.Minute)
