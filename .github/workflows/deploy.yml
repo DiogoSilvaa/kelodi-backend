@@ -19,8 +19,7 @@ jobs:
           host: ${{ secrets.VPS_IP }}
           username: dokku
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          script: |
-            dokku config:set kelodi-backend KELODI_DB_DSN="${{ secrets.KELODI_DB_DSN }}"
+          script: dokku config:set kelodi-backend KELODI_DB_DSN="${{ secrets.KELODI_DB_DSN }}"
 
       - name: Deploy to Dokku using Dokku Action
         uses: dokku/dokku-action@master
