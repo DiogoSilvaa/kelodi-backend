@@ -21,7 +21,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Dokku using Dokku Action
-        uses: dokku/dokku-action@v1.0
+        uses: dokku/dokku-action@master
         with:
           remote: dokku@${{ secrets.VPS_IP }}:kelodi-backend
           branch: master
