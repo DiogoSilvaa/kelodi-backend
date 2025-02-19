@@ -12,7 +12,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
+      - name: Validate SSH Key Format
+        run: |
+          echo "Validating SSH key format..."
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null 2>&1; then
+          echo "Error: SSH key format is invalid (check for wrong EOL characters, missing newline, etc.)"
+          exit 1
+          fi
+      
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
