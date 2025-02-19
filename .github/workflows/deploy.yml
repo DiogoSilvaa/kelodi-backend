@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to Dokku using Dokku Action
         uses: dokku/dokku-action@master
         with:
-          remote: dokku@${{ secrets.VPS_IP }}:kelodi-backend
+          git_remote_url: ssh://dokku@${{ secrets.VPS_IP }}/kelodi-backend
           branch: master
         env:
           DOKKU_SSH_PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
