@@ -20,10 +20,10 @@ jobs:
           username: dokku
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            dokku config:set kelodi-backend KELODI_DB_DSN="${{ secrets.KELODI_DB_DSN }}"
-            dokku config:set kelodi-backend SMTP_USER="${{ secrets.SMTP_USER }}"
-            dokku config:set kelodi-backend SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
-            dokku config:set kelodi-backend SMTP_SENDER="${{ secrets.SMTP_SENDER }}"
+            dokku config:set kelodi-backend KELODI_DB_DSN="${{ secrets.KELODI_DB_DSN }}" && \
+            dokku config:set kelodi-backend SMTP_USER="${{ secrets.SMTP_USER }}" && \
+            dokku config:set kelodi-backend SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}" && \
+            dokku config:set kelodi-backend SMTP_SENDER="${{ secrets.SMTP_SENDER }}" && \
             dokku config:set kelodi-backend SMTP_HOST="${{ secrets.SMTP_HOST }}"
 
       - name: Deploy to Dokku using Dokku Action
