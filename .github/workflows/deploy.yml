@@ -20,9 +20,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to Dokku
-        run: |
-          git remote add dokku dokku@${{ secrets.VPS_IP }}:kelodi-backend
-          git push dokku master
+      - name: Deploy to Dokku using Dokku Action
+        uses: dokku/dokku-action@v1.0
+        with:
+          remote: dokku@${{ secrets.VPS_IP }}:kelodi-backend
+          branch: master
         env:
           DOKKU_SSH_PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
