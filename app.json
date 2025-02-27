@@ -2,7 +2,7 @@
   "name": "kelodi-backend",
   "scripts": {
     "dokku": {
-      "postdeploy": "migrate -path ./migrations -database \"$DATABASE_URL\" up"
+      "postdeploy": "sh -c '/app/migrate -path ./migrations -database \"$DATABASE_URL\" up'"
     }
   }
 }
