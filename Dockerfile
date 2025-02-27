@@ -10,8 +10,9 @@ COPY go.mod go.sum ./
 # Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Install golang-migrate
+# Install golang-migrate + postgres to allow for dokku's db migration
 RUN go install -tags 'netgo' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 # Copy the source code into the container
 COPY . .
