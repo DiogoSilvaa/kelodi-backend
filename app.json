@@ -1,0 +1,8 @@
+{
+  "name": "kelodi-backend",
+  "scripts": {
+    "dokku": {
+      "postdeploy": "migrate -path ./migrations -database \"$DATABASE_URL\" up"
+    }
+  }
+}
