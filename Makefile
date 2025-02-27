@@ -42,7 +42,7 @@ db-migration-new:
 .PHONY: db-migration-up
 db-migration-up: confirm
 	@echo "Running migrations..."
-	migrate -path=$(MIGRATION_PATH) -database=$(KELODI_DB_DSN) up
+	migrate -path=$(MIGRATION_PATH) -database=$(DATABASE_URL) up
 
 
 # =====================Quality control=======================
@@ -91,7 +91,7 @@ prod-vps-setup:
 .PHONY: prod-deploy-api
 prod-deploy-api:
 	rsync -rP -e /usr/bin/ssh --delete ./bin/linux_amd64/api ./migrations kelodi@${production_host_ip}:~/backend/
-	ssh -t kelodi@${production_host_ip} 'migrate -path=./backend/migrations -database=$$KELODI_DB_DSN up' 
+	ssh -t kelodi@${production_host_ip} 'migrate -path=./backend/migrations -database=$$DATABASE_URL up' 
 
 ## prod-configure-api-service: configure the api service on the production server
 .PHONY: prod-configure-api-service
