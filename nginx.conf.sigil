@@ -30,3 +30,12 @@ server {
     proxy_busy_buffers_size {{ .PROXY_BUSY_BUFFERS_SIZE | default "8k" }};
   }
 }
+
+{{ range $upstream_port := $.PROXY_UPSTREAM_PORTS | split " " }}
+upstream {{ $.APP }}-{{ $upstream_port }} {
+{{ range $listeners := $.DOKKU_APP_WEB_LISTENERS | split " " }}
+{{ $listener_list := $listeners | split ":" }}
+{{ $listener_ip := index $listener_list 0 }}
+  server {{ $listener_ip }}:{{ $upstream_port }};{{ end }}
+}
+{{ end }}
