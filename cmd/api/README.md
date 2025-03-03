@@ -92,8 +92,8 @@ The API supports filtering, sorting and pagination for various endpoints. You ca
 
 To use the Kelodi API, make HTTP requests to the defined endpoints. Below are some example endpoints:
 
-- `GET /v1/healthcheck`: Get current server status
-- `GET /v1/properties`: Get all properties
-- `POST /v1/properties`: Create a new property
+- `GET /api/v1/healthcheck`: Get current server status
+- `GET /api/v1/properties`: Get all properties
+- `POST /api/v1/properties`: Create a new property
 
 Refer to the main [README.md](../../README.md) for installation and setup instructions.

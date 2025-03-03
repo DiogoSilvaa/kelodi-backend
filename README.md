@@ -41,9 +41,9 @@ To use the Kelodi Backend, make HTTP requests to the API endpoints.
 
 ### Example Endpoints
 
-- `GET /v1/healthcheck`: Get current server status
-- `GET /v1/properties`: Get all properties
-- `POST /v1/properties`: Create new property
+- `GET /api/v1/healthcheck`: Get current server status
+- `GET /api/v1/properties`: Get all properties
+- `POST /api/v1/properties`: Create new property
 
 ## Dependencies
 
